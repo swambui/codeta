@@ -5,12 +5,12 @@ A tool for automated source code grading.
 
 Dependencies
 ============
--python flask
+- python flask
 
--python flask-login
+- python flask-login
 
--python passlib
+- python passlib
 
--python sqlalchemy
+- python sqlalchemy
 
--postgresql
+- postgresql
