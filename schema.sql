@@ -34,6 +34,25 @@ create table course (
     foreign key (instructor_id) references instructor (instructor_id)
 );
 
+drop table if exists instructorTeachesCourse
+create table if exists instructorTeachesCourse (
+    instructor_id integer not null,
+    course_id integer not null,
+
+    foreign key (instructor_id) references instructor (instructor_id),
+    foreign key (course_id) references course (course_id)
+);
+
+drop table if exists studentEnrollsCourse
+create table if exists studentEnrollsCourse (
+    student_id integer not null,
+    course_id integer not null,
+
+    foreign key (student_id) references student (student_id),
+    foreign key (course_id) references course (course_id)
+
+);
+
 drop table if exists assignment;
 create table assignment (
     assignment_id bigserial primary key,
@@ -65,4 +84,13 @@ create table submission (
 
     foreign key (student_id) references student (student_id),
     foreign key (assignment_id) references assignment (assignment_id)
+);
+
+drop table if exists submissionFile;
+create table if exists submissionFile (
+    student_id integer not null,
+    submission_id integer not null,
+
+    foreign key (student_id) references student (student_id),
+    foreign key (submission_id) references submission (submission_id)
 );
