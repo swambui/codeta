@@ -19,7 +19,7 @@ CP=/bin/cp;
 RM=/bin/rm;
 ECHO=/bin/echo;
 
-
+APT_GET=/usr/bin/apt-get
 #-------------------------------------------------------------------------------
 # default configuration
 #
@@ -35,6 +35,10 @@ webapp_dir='/srv/www/'$app'/wsgi'
 
 
 function deploy_server {
+    # make sure we upgrade before we do things
+    $APT_GET update
+    $APT_GET upgrade
+
     # run deployment scripts for our programs
     programs=(
         'apache'
