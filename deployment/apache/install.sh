@@ -38,3 +38,5 @@ $MKDIR -p /srv/www/$webapp_name/wsgi/
 $MKDIR -p /srv/www/$webapp_name/log/
 
 $CHMOD -R 777 /srv/www/$webapp_name/
+
+$INITD start
