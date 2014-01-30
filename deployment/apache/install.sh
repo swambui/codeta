@@ -31,7 +31,7 @@ $APT_GET install -y -qq apache2 libapache2-mod-wsgi
 $RM $apache_dir/sites-enabled/000-default
 $CP $deployment_dir/apache/$webapp_name.conf $apache_dir/sites-enabled/$webapp_name.conf
 
-$INITD apache2 reload
+$INITD reload
 
 $MKDIR -p /srv/www/$webapp_name/root/
 $MKDIR -p /srv/www/$webapp_name/wsgi/
