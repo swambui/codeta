@@ -12,7 +12,7 @@ MKDIR=/bin/mkdir
 CHMOD=/bin/chmod
  
 APT_GET=/usr/bin/apt-get
-SERVICE=/usr/bin/service
+INITD=/etc/init.d/apache2
 
 #-------------------------------------------------------------------------------
 # default script config
@@ -31,7 +31,7 @@ $APT_GET install -y -qq apache2 libapache2-mod-wsgi
 $RM $apache_dir/sites-enabled/000-default
 $CP $deployment_dir/apache/$webapp_name.conf $apache_dir/sites-enabled/$webapp_name.conf
 
-$SERVICE apache2 reload
+$INITD apache2 reload
 
 $MKDIR -p /srv/www/$webapp_name/root/
 $MKDIR -p /srv/www/$webapp_name/wsgi/
