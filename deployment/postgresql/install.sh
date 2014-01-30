@@ -7,37 +7,36 @@ RM=/bin/rm
 CP=/bin/cp
 MKDIR=/bin/mkdir
 CHMOD=/bin/chmod
- 
-APT_GET=/usr/bin/apt-get
-SERVICE=/usr/bin/service
-SUDO=/usr/bin/sudo
 
 ADDUSER=/usr/sbin/adduser
+ 
+APT_GET=/usr/bin/apt-get
+INITD=/etc/init.d/postgresql
+SUDO=/usr/bin/sudo
 
 #-------------------------------------------------------------------------------
 # default script config
 #-------------------------------------------------------------------------------
-#set e
-deployment_dir=$1
-webapp_name=$2
 postgres_version='9.1'
+
+database_user='pguser'
+default_password='default'
 
 #-------------------------------------------------------------------------------
 # install postgres and create a new non-admin user
-# called 'pguser' by default for our database admin stuff
 # 
 # Then create a database name that is set in the main 'deploy.sh'
 #-------------------------------------------------------------------------------
 $APT_GET install -y -qq postgresql
 
-$ADDUSER --system pguser
-$CHMOD -R 700 /home/pguser/
+$ADDUSER --system $database_user
+$CHMOD -R 700 /home/$database_user/
 
 # change to postgres user and create our luser
-$SUDO -u postgres createuser -D -E -l -S -R pguser
-$SUDO -u postgres psql -U postgres -d postgres -c "alter user pguser with password 'thisisnotinthedictionary';"
-$SUDO -u postgres createdb $webapp_name
+$SUDO -u postgres createuser -D -E -l -S -R $database_user
+$SUDO -u postgres psql -U postgres -d postgres -c "alter user $database_user with password '$default_password';"
+$SUDO -u postgres createdb $app
 
 $CP $deployment_dir/postgresql/pg_hba.conf /etc/postgresql/$postgres_version/main/pg_hba.conf
 
-$SERVICE postgresql restart
+$INITD restart

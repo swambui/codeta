@@ -8,7 +8,6 @@
 #-------------------------------------------------------------------------------
 RM=/bin/rm
 CP=/bin/cp
-MKDIR=/bin/mkdir
 CHMOD=/bin/chmod
  
 APT_GET=/usr/bin/apt-get
@@ -17,10 +16,7 @@ INITD=/etc/init.d/apache2
 #-------------------------------------------------------------------------------
 # default script config
 #-------------------------------------------------------------------------------
-apache_dir='/etc/apache2'
-
-deployment_dir=$1
-webapp_name=$2
+apache_dir=/etc/apache2 #TODO make this not distro specific
 set e
 
 #-------------------------------------------------------------------------------
@@ -29,14 +25,8 @@ set e
 $APT_GET install -y -qq apache2 libapache2-mod-wsgi
 
 $RM $apache_dir/sites-enabled/000-default
-$CP $deployment_dir/apache/$webapp_name.conf $apache_dir/sites-enabled/$webapp_name.conf
+$CP $deployment_dir/apache/$app.conf $apache_dir/sites-enabled/$app.conf
 
 $INITD reload
-
-$MKDIR -p /srv/www/$webapp_name/root/
-$MKDIR -p /srv/www/$webapp_name/wsgi/
-$MKDIR -p /srv/www/$webapp_name/log/
-
-$CHMOD -R 777 /srv/www/$webapp_name/
 
 $INITD start

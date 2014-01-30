@@ -14,30 +14,52 @@
 
 #-------------------------------------------------------------------------------
 # bin for the script
+#-------------------------------------------------------------------------------
 BASH=/bin/bash;
 CP=/bin/cp;
 RM=/bin/rm;
 ECHO=/bin/echo;
+MKDIR=/bin/mkdir;
 
-APT_GET=/usr/bin/apt-get
+APT_GET=/usr/bin/apt-get;
+
 #-------------------------------------------------------------------------------
 # default configuration
-#
+#-------------------------------------------------------------------------------
 
 # dir name for the source code in the git dir
-app='codeta'
+export app='codeta'
 
+# directory configs
 # dir where the cloned repo is. Automatically generated when you run deploy.sh
-git_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+export git_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+export deployment_dir=$git_dir/deployment
 
-# webserver directory for the webapp source code
-webapp_dir='/srv/www/'$app'/wsgi'
+# webserver configs
+export webserver_dir=/srv/www
+export webapp_dir=$webserver_dir/$app/wsgi
+export webapp_root_dir=$webserver_dir/$app/root
 
+# python configs
+
+# logging configs
+export deploy_log_dir=$git_dir/deploy.log
+export webapp_log_dir=$webserver_dir/$app/log
+
+
+#-------------------------------------------------------------------------------
+# main functions of the script
+#-------------------------------------------------------------------------------
 
 function deploy_server {
     # make sure we upgrade before we do things
     $APT_GET update
     $APT_GET upgrade
+
+    # create needed directories
+    $MKDIR -p $webapp_dir
+    $MKDIR -p $webapp_root_dir
+    $MKDIR -p $webapp_log_dir
 
     # run deployment scripts for our programs
     programs=(
@@ -45,9 +67,10 @@ function deploy_server {
         'postgresql'
         'python'
     )
+
     for i in "${programs[@]}"
     do
-        $BASH $git_dir/deployment/$i/install.sh $git_dir/deployment $app
+        $BASH $git_dir/deployment/$i/install.sh
     done
 }
 

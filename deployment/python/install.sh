@@ -8,7 +8,8 @@ MKDIR=/bin/mkdir
 CHMOD=/bin/chmod
  
 APT_GET=/usr/bin/apt-get
-PIP=/usr/bin/pip
+
+PIP=/usr/local/bin/pip
 
 #-------------------------------------------------------------------------------
 # default script config
@@ -19,3 +20,5 @@ $APT_GET install -y -qq libapache2-mod-wsgi python-psycopg2 build-essential pyth
 
 # install python packages
 $PIP install flask flask-login passlib sqlalchemy
+
+# set up virtualenv here
