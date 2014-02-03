@@ -53,8 +53,8 @@ export webapp_log_dir=$webserver_dir/$app/log
 
 function deploy_server {
     # make sure we upgrade before we do things
-    $APT_GET update
-    $APT_GET upgrade
+    $APT_GET update -y -qq
+    $APT_GET upgrade -y -qq
 
     # create needed directories
     $MKDIR -p $webapp_dir
@@ -76,9 +76,13 @@ function deploy_server {
 
 function deploy_webapp {
     # Remove all python components and reinstall from github directory
-    if [ -d $webapp_dir/$app ] ; then
-        $RM -rf $webapp_dir/$app/
-    fi
+
+    # filter out python virtualenv files
+    for file in $(ls $webapp_dir/$app | grep -Ev '^(bin|include|lib|local)$')
+    do
+        $RM -rf $webapp_dir/$app/$file
+    done
+
     $CP -r $git_dir/$app/ $webapp_dir/
 }
 
