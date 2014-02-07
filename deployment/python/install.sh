@@ -1,4 +1,5 @@
 #!/bin/bash
+
 #-------------------------------------------------------------------------------
 # bin needed for script
 #-------------------------------------------------------------------------------
@@ -9,7 +10,7 @@ CHMOD=/bin/chmod
  
 APT_GET=/usr/bin/apt-get
 
-PIP=/usr/local/bin/pip
+#PIP=/usr/local/bin/pip
 
 VIRT_PIP=$webapp_dir/$app/bin/pip
 VIRTENV=/usr/local/bin/virtualenv
@@ -26,10 +27,10 @@ set e
 $APT_GET install -y -qq libapache2-mod-wsgi python-psycopg2 build-essential \
     python-pip libpq-dev python-dev
 
+PIP=$(which pip)
 # install python packages
 $PIP install -q virtualenv
 
 $VIRTENV $webapp_dir/$app
 
-#$VIRT_PIP install flask flask-login passlib sqlalchemy 
 $VIRT_PIP install -q -r $deployment_dir/python/requirements.pip
