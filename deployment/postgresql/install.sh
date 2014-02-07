@@ -27,7 +27,7 @@ default_password='default'
 # 
 # Then create a database name that is set in the main 'deploy.sh'
 #-------------------------------------------------------------------------------
-$APT_GET install -y -qq postgresql
+$APT_GET install -y -qq postgresql postgresql-server-dev-all libpg-dev
 
 $ADDUSER --system $database_user
 $CHMOD -R 700 /home/$database_user/

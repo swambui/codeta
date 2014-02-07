@@ -23,7 +23,8 @@ set e
 # do it
 #-------------------------------------------------------------------------------
 
-$APT_GET install -y -qq libapache2-mod-wsgi python-psycopg2 build-essential python-pip 
+$APT_GET install -y -qq libapache2-mod-wsgi python-psycopg2 build-essential \
+    python-pip libpq-dev python-dev
 
 # install python packages
 $PIP install -q virtualenv
