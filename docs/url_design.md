@@ -13,6 +13,10 @@ Login page
 
 Logout the current user
 
+### www.codeta.com/join
+
+User can sign up for an account
+
 ### www.codeta.com/new
 
 Creates a new class for current logged in user

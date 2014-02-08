@@ -14,7 +14,6 @@ import psycopg2
 app = Flask(__name__)
 
 # configuration options
-
 app.config.update(dict(
     DATABASE = 'codeta',
     DEBUG = True,
@@ -23,12 +22,13 @@ app.config.update(dict(
 ))
 
 # get config options from environment vars
-#app.config.from_envvar('CODETA_SETTINGS', silent=True)
+app.config.from_envvar('CODETA_SETTINGS', silent=True)
 
+# helper functions
 def connect_db():
     """
         Connect to the database in the app.config
-        returns a cursor object on success
+        returns a connection object on success
     """
     conn = psycopg2.connect(
             dbname = app.config['DATABASE'],
@@ -37,16 +37,6 @@ def connect_db():
     )
 
     return conn
-
-def init_db():
-    """
-        create the database tables in teh schema if not found
-    """
-    with app.app_context():
-        db = get_db()
-        with app.open_resource('schema.sql', mode='r') as f:
-            db.cursor().execute(f.read())
-        db.commit()
 
 def get_db():
     """
@@ -58,10 +48,20 @@ def get_db():
         g.pgsql_db = connect_db()
     return g.pgsql_db
 
+def init_db():
+    """
+        create the database tables in teh schema if not found
+    """
+    with app.app_context():
+        db = get_db()
+        with app.open_resource('sql/init_codeta.sql', mode='r') as f:
+            db.cursor().execute(f.read())
+        db.commit()
 
 @app.route("/")
 def homepage():
     return render_template('home.html')
+
 
 if __name__ == "__main__":
     app.run()

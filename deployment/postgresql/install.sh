@@ -30,12 +30,15 @@ default_password='default'
 $APT_GET install -y -qq postgresql postgresql-server-dev-all libpg-dev
 
 $ADDUSER --system $database_user
-$CHMOD -R 700 /home/$database_user/
+$CHMOD -R 600 /home/$database_user/
 
 # change to postgres user and create our luser
 $SUDO -u postgres createuser -D -E -l -S -R $database_user
 $SUDO -u postgres psql -U postgres -d postgres -c "alter user $database_user with password '$default_password';"
 $SUDO -u postgres createdb $app
+
+# create test database
+$SUDO -u postgres createdb $app"_test"
 
 $CP $deployment_dir/postgresql/pg_hba.conf /etc/postgresql/$postgres_version/main/pg_hba.conf
 
