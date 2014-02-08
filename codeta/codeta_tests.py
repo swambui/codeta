@@ -6,8 +6,14 @@
 
 """
 
+# System imports
 import os
+
+# App imports
 import codeta
+from conf import test_settings
+
+# Other
 import unittest
 import psycopg2
 import logging
@@ -17,13 +23,7 @@ class CodetaTestCase(unittest.TestCase):
     # set up and tear down functions for tests
     def setUp(self):
         """ create tables in database for each test """
-        codeta.app.config['DATABASE'] = 'codeta_test'
-        codeta.app.config['TESTING'] = True
-        codeta.app.config['TEST_USER'] = 'test_instructor'
-        codeta.app.config['TEST_PW'] = 'test_password'
-        logging.debug('app.config = %s' % (codeta.app.config))
         self.app = codeta.app.test_client()
-        logging.debug('Attempting to init_db()')
         codeta.init_db()
 
     def tearDown(self):
@@ -48,7 +48,14 @@ class CodetaTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # configure logging
-    logging.basicConfig(filename='../../log/codeta-debug.log', filemode='w', level=logging.DEBUG)
+    # set config testing options
+    for setting in dir(test_settings):
+        if setting.isupper():
+            setting_val = getattr(test_settings, setting)
+            codeta.app.config.update({
+                setting: setting_val
+            })
+
+    logging.basicConfig(filename=test_settings.LOG_PATH, level=logging.DEBUG)
 
     unittest.main()

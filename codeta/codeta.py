@@ -9,17 +9,19 @@
 from flask import Flask, request, session, g, redirect, url_for, \
         abort, render_template, flash
 
+from conf import dev_settings
+
 import psycopg2
 
 app = Flask(__name__)
 
-# configuration options
-app.config.update(dict(
-    DATABASE = 'codeta',
-    DEBUG = True,
-    USERNAME = 'pguser',
-    PASSWORD = 'default'
-))
+# set configuration options
+for setting in dir(dev_settings):
+    if setting.isupper():
+        setting_val = getattr(dev_settings, setting)
+        app.config.update({
+            setting: setting_val
+        })
 
 # get config options from environment vars
 app.config.from_envvar('CODETA_SETTINGS', silent=True)
