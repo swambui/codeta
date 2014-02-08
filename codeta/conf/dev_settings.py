@@ -7,10 +7,11 @@ DEBUG = True
 
 # Database
 DATABASE = 'codeta'
+SECRET_KEY = 'development key'
+DB_USER = 'pguser'
+DB_PASSWORD = 'default'
 
 # User
-USERNAME = 'pguser'
-PASSWORD = 'default'
 
 # Logging
-DEBUG_LOG = '../../log/codeta-debug.log'
+LOG_PATH = '../../log/codeta-debug.log'

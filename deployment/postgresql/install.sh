@@ -33,12 +33,15 @@ $ADDUSER --system $database_user
 $CHMOD -R 600 /home/$database_user/
 
 # change to postgres user and create our luser
-$SUDO -u postgres createuser -D -E -l -S -R $database_user
-$SUDO -u postgres psql -U postgres -d postgres -c "alter user $database_user with password '$default_password';"
-$SUDO -u postgres createdb $app
+$SUDO -u postgres createuser -d -E -l -S -R $database_user
 
-# create test database
-$SUDO -u postgres createdb $app"_test"
+# create databases
+$SUDO -u postgres createdb -O $database_user $app
+$SUDO -u postgres createdb -O $database_user $app"_test"
+
+# add password to database_user
+$SUDO -u postgres psql -U postgres -d postgres -c "alter user $database_user with password '$default_password';"
+
 
 $CP $deployment_dir/postgresql/pg_hba.conf /etc/postgresql/$postgres_version/main/pg_hba.conf
 

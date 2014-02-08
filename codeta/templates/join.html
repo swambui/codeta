@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Code TA</title>
+</head>
+
+{% block body %}
+    {% if error %} Error: {{ error }} {% endif %}
+    <form method="post" action="">
+        Username: <input id="username" name="username" type="text">
+        password: <input id="password" name="password" type="text">
+        password2: <input id="password2" name="password2" type="text">
+        email: <input id="email" name="email" type="text">
+        fname: <input id="fname" name="fname" type="text">
+        lname: <input id="lname" name="lname" type="text">
+
+        <input type="submit" value="Submit">
+    </form>
+
+{% endblock %}
+
+</html>
