@@ -35,6 +35,7 @@ class CodetaTestCase(unittest.TestCase):
                 cur.execute(f.read())
             db.commit()
             cur.close()
+            db.close()
 
     # unit test helper functions
     def register(self, username, password, password2=None,
@@ -72,19 +73,20 @@ class CodetaTestCase(unittest.TestCase):
         return self.app.get('/logout', follow_redirects=True)
 
     # Unit tests
-    def test_unauth_homepage(self):
+    def test_homepage(self):
         """
             Test the homepage for a user who has not logged in
         """
         rc = self.app.get('/')
         assert b'Welcome to Code TA' in rc.data
+        assert b'Logout' not in rc.data
 
     def test_register(self):
         """ Test registering for a new account """
         rc = self.register(
                 codeta.app.config['TEST_USER'],
                 codeta.app.config['TEST_PW'])
-        assert b'You successfully joined, welcome!' in rc.data
+        assert b'Login to Code TA' in rc.data
 
         rc = self.register(
                 codeta.app.config['TEST_USER'],
@@ -102,6 +104,29 @@ class CodetaTestCase(unittest.TestCase):
 
         rc = self.register('derp', 'pass', 'pass', email='broke')
         assert b'You must enter a valid email address.' in rc.data
+
+    def test_login_logout(self):
+        self.register(
+                codeta.app.config['TEST_USER'],
+                codeta.app.config['TEST_PW'])
+
+        rc = self.login(
+                codeta.app.config['TEST_USER'],
+                codeta.app.config['TEST_PW'])
+        assert b'Logout' in rc.data
+
+        rc = self.logout()
+        assert b'You logged out.' in rc.data
+
+        rc = self.login(
+                codeta.app.config['TEST_USER'],
+                'wrong password')
+        assert b'Invalid username or password.' in rc.data
+
+        rc = self.login(
+                'user_doesnt_exist',
+                'wrong password')
+        assert b'Invalid username or password.' in rc.data
 
 
 if __name__ == '__main__':

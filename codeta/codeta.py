@@ -12,6 +12,8 @@ from flask import Flask, request, session, g, redirect, url_for, \
 from conf import dev_settings
 
 import psycopg2
+import psycopg2.extras
+
 from flask.ext.login import (LoginManager, current_user, login_required,
         login_user, logout_user, UserMixin, AnonymousUserMixin, confirm_login,
         fresh_login_required)
@@ -34,6 +36,29 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 # helper functions
+def auth_user(username, password):
+    """
+        Authenticates a user and returns a User object
+        if the correct credentials were provided
+        otherwise, return None
+    """
+    db = get_db()
+    cur = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    cur.execute("SELECT * FROM Users WHERE username = (%s) \
+            AND password = (%s)", (username, password, ))
+    user = cur.fetchone()
+    colnames = [desc[0] for desc in cur.description]
+
+    if user:
+        user = dict(zip(colnames, user))
+        user = User(
+                int(user['user_id']),
+                user['username'],
+                user['password'],
+                user['email'])
+    cur.close()
+    return user
+
 def connect_db():
     """
         Connect to the database in the app.config
@@ -66,24 +91,26 @@ def get_db():
 
 def get_user(user_id):
     """
-        checks the database for a user.
+        Creates a new User object from the database
         returns a User object if found, otherwise None
     """
     user_id = int(user_id)
 
     db = get_db()
     cur = db.cursor()
-    cur.execute("SELECT * FROM Users WHERE username like (%s)", (user_id, ))
-    user = db.cursor().fetchone()
+    cur.execute("SELECT * FROM Users WHERE user_id = (%s)", (user_id, ))
+    user = cur.fetchone()
+    colnames = [desc[0] for desc in cur.description]
 
     if user:
-        user = dict(zip(db.cursor().description, user))
+        user = dict(zip(colnames, user))
         user = User(
                 int(user['user_id']),
                 user['username'],
                 user['password'],
                 user['email'])
 
+    cur.close()
     return user
 
 def get_username(username):
@@ -101,9 +128,6 @@ def get_username(username):
 
     return user
 
-def login_user(user):
-    pass
-
 def init_db():
     """
         create the database tables in teh schema if not found
@@ -115,8 +139,12 @@ def init_db():
         db.commit()
 
 @login_manager.user_loader
-def load_user(id):
-    return get_user(id)
+def load_user(user_id):
+    return get_user(user_id)
+
+@app.before_request
+def before_request():
+    g.user = current_user
 
 # views
 @app.route('/')
@@ -160,11 +188,33 @@ def join():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     # login user
-    return 'You successfully joined, welcome!'
+    error = None
+    if request.method == 'POST':
+        if not request.form['username']:
+            error = 'Invalid username.'
+        elif not request.form['password']:
+            error = 'Invalid password.'
+        else:
+            user = auth_user(
+                    request.form['username'],
+                    request.form['password'])
+            if user:
+                login_user(user)
+                return redirect(url_for('homepage'))
+            else:
+                error = 'Invalid username or password.'
+
+    return render_template('login.html', error=error)
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return 'You logged out.'
 
 class User(UserMixin):
-    def __init__(self, id, username, password, email, active=True):
-        self.id = id
+    def __init__(self, user_id, username, password, email, active=True):
+        self.user_id = user_id
         self.username = username
         self.password = password
         self.email = email
@@ -180,7 +230,7 @@ class User(UserMixin):
         return False
 
     def get_id(self):
-        return id
+        return unicode(self.user_id)
 
     def __repr__(self):
         return '<User %r>' % (self.username)
