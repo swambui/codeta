@@ -6,14 +6,15 @@
 
 """
 
-from flask import Flask, request, session, g, redirect, url_for, \
-        abort, render_template, flash
-
+# codeta imports
 from conf import dev_settings
 
+# other
+from flask import Flask, request, session, g, redirect, url_for, \
+        abort, render_template, flash
 import psycopg2
 import psycopg2.extras
-
+from passlib.context import CryptContext
 from flask.ext.login import (LoginManager, current_user, login_required,
         login_user, logout_user, UserMixin, AnonymousUserMixin, confirm_login,
         fresh_login_required)
@@ -44,6 +45,8 @@ def auth_user(username, password):
     """
     db = get_db()
     cur = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+    # hash the password and store it in the db
     cur.execute("SELECT * FROM Users WHERE username = (%s) \
             AND password = (%s)", (username, password, ))
     user = cur.fetchone()
