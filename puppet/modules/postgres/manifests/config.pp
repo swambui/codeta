@@ -1,0 +1,3 @@
+class postgres::config {
+ 	}
+}
