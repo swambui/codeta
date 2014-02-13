@@ -6,32 +6,29 @@
 
 """
 
-# System imports
 import os
-
-# App imports
-import codeta
-from conf import test_settings
-
-# Other
 import unittest
 import psycopg2
 import logging
+
+from codeta import app, db
+from codeta.conf.test import *
+from codeta.models.database import Postgres
 
 class CodetaTestCase(unittest.TestCase):
 
     # set up and tear down functions for tests
     def setUp(self):
         """ create tables in database for each test """
-        self.app = codeta.app.test_client()
-        codeta.init_db()
+        self.app = app.test_client()
+        db.init_db()
 
     def tearDown(self):
         """ drop all the tables and close connection """
-        with codeta.app.app_context():
-            db = codeta.get_db()
+        with app.app_context():
+            db = app.db.get_db()
             cur = db.cursor()
-            with codeta.app.open_resource('sql/drop_tests.sql', mode='r') as f:
+            with app.open_resource('sql/drop_tests.sql', mode='r') as f:
                 cur.execute(f.read())
             db.commit()
             cur.close()
@@ -84,13 +81,13 @@ class CodetaTestCase(unittest.TestCase):
     def test_register(self):
         """ Test registering for a new account """
         rc = self.register(
-                codeta.app.config['TEST_USER'],
-                codeta.app.config['TEST_PW'])
+                app.config['TEST_USER'],
+                app.config['TEST_PW'])
         assert b'Login to Code TA' in rc.data
 
         rc = self.register(
-                codeta.app.config['TEST_USER'],
-                codeta.app.config['TEST_PW'])
+                app.config['TEST_USER'],
+                app.config['TEST_PW'])
         assert b'Sorry, that username is already taken.' in rc.data
 
         rc = self.register('', 'derp')
@@ -107,19 +104,19 @@ class CodetaTestCase(unittest.TestCase):
 
     def test_login_logout(self):
         self.register(
-                codeta.app.config['TEST_USER'],
-                codeta.app.config['TEST_PW'])
+                app.config['TEST_USER'],
+                app.config['TEST_PW'])
 
         rc = self.login(
-                codeta.app.config['TEST_USER'],
-                codeta.app.config['TEST_PW'])
+                app.config['TEST_USER'],
+                app.config['TEST_PW'])
         assert b'Logout' in rc.data
 
         rc = self.logout()
         assert b'You logged out.' in rc.data
 
         rc = self.login(
-                codeta.app.config['TEST_USER'],
+                app.config['TEST_USER'],
                 'wrong password')
         assert b'Invalid username or password.' in rc.data
 
@@ -131,13 +128,8 @@ class CodetaTestCase(unittest.TestCase):
 
 if __name__ == '__main__':
     # set config testing options
-    for setting in dir(test_settings):
-        if setting.isupper():
-            setting_val = getattr(test_settings, setting)
-            codeta.app.config.update({
-                setting: setting_val
-            })
+    app.config.from_pyfile('conf/test.py')
 
-    logging.basicConfig(filename=test_settings.LOG_PATH, level=logging.DEBUG)
+    logging.basicConfig(filename='test.log', level=logging.DEBUG)
 
     unittest.main()
