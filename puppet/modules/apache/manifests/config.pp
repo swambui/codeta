@@ -29,4 +29,25 @@ class apache::config {
         require => Class['apache::install'],
         notify => Class['apache::service'],
  	}
+
+    file { '/srv/www/codeta/log':
+        ensure => directory,
+        owner => 'root',
+        group => 'root',
+        mode => 0440,
+    }
+
+    file { '/srv/www/codeta/wsgi':
+        ensure => directory,
+        owner => 'root',
+        group => 'root',
+        mode => 0444,
+    }
+
+    file { '/srv/www/codeta/root':
+        ensure => directory,
+        owner => 'root',
+        group => 'root',
+        mode => 0444,
+    }
 }

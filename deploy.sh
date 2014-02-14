@@ -63,8 +63,23 @@ function deploy_webapp {
     $CP -r $git_dir/$app/ $webapp_dir/
 }
 
+function deploy_server {
+    # set up and run our puppet stuff
+    apt-get install puppet
+    puppet apply $git_dir/puppet/manifests/bootstrap.pp
+    git clone https://www.github.com/bmoar/codeta.git /var/git/puppet/codeta
+    chown -R git /var/git/puppet/codeta/
+}
+
+function deploy_puppet {
+    # pull codeta repo and run puppet
+    cd /var/git/puppet/codeta/
+    git pull
+    puppet apply /var/git/puppet/codeta/puppet/manifests/site.pp
+}
+
 function usage {
-    $ECHO "usage: deploy.sh (all | webapp | server)"
+    $ECHO "usage: deploy.sh (all | puppet | server | webapp)"
     exit
 }
 
@@ -77,13 +92,17 @@ set e
 case $user_args in
     all)
         deploy_server
+        deploy_puppet
         deploy_webapp
         ;;
-    webapp)
-        deploy_webapp
+    puppet)
+        deploy_puppet
         ;;
     server)
         deploy_server
+        ;;
+    webapp)
+        deploy_webapp
         ;;
     *)
         usage
