@@ -6,12 +6,12 @@ user { 'git':
 file {
     '/var/git':
     ensure => directory,
-    owner => git,
+    owner => 'git',
     require => User['git'];
 
     '/var/git/puppet':
     ensure => directory,
-    owner => git,
+    owner => 'git',
     require => [User['git'], File['/var/git']];
 
 }
@@ -20,10 +20,8 @@ package { 'git':
     ensure => present,
 }
 
-exec { 'Pull codeta repo':
-    cwd => '/var/git/puppet/',
-    user => 'git',
-    command => '/usr/bin/git clone https://github.com/bmoar/codeta.git',
-    creates => '/var/git/puppet/codeta/.git/HEAD',
-    require => [File['/var/git/puppet'], Package['git'], User['git']],
+exec { 'Change puppet config':
+    user => 'root',
+    command => '/bin/cp /var/git/puppet/codeta/puppet/files/puppet.conf /etc/puppet/puppet.conf',
+    creates => '/etc/puppet/puppet.conf',
 }

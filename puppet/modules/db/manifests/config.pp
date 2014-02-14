@@ -5,6 +5,10 @@ class db::config {
 
     class { 'postgresql::server': }
 
+    package { 'postgresql-server-dev-all':
+        ensure => installed,
+    }
+
     # override defaults in postgresql::globals
     postgresql::server::pg_hba_rule {
         'local access as prostgres user':

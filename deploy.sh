@@ -51,29 +51,6 @@ export webapp_log_dir=$webserver_dir/$app/log
 # main functions of the script
 #-------------------------------------------------------------------------------
 
-function deploy_server {
-    # make sure we upgrade before we do things
-    $APT_GET update -y -qq
-    $APT_GET upgrade -y -qq
-
-    # create needed directories
-    $MKDIR -p $webapp_dir
-    $MKDIR -p $webapp_root_dir
-    $MKDIR -p $webapp_log_dir
-
-    # run deployment scripts for our programs
-    programs=(
-        'apache'
-        'postgresql'
-        'python'
-    )
-
-    for i in "${programs[@]}"
-    do
-        $BASH $git_dir/deployment/$i/install.sh
-    done
-}
-
 function deploy_webapp {
     # Remove all python components and reinstall from github directory
 
