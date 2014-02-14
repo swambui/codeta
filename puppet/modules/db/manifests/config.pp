@@ -71,18 +71,21 @@ class db::config {
 
     postgresql::server::role { 'pguser':
         password_hash => postgresql_password('pguser', 'default'),
+        require => Class['db::install'],
     }
 
     postgresql::server::db { 'codeta':
         user => 'pguser',
         password => postgresql_password('pguser', 'default'),
         owner => 'pguser',
+        require => Class['db::install'],
     }
 
     postgresql::server::db { 'codeta_test':
         user => 'pguser',
         password => postgresql_password('pguser', 'default'),
         owner => 'pguser',
+        require => Class['db::install'],
     }
 
 }
