@@ -66,8 +66,9 @@ function deploy_webapp {
 function deploy_server {
     # set up and run our puppet stuff
     apt-get install puppet
-    puppet apply $git_dir/puppet/manifests/bootstrap.pp
     git clone https://www.github.com/bmoar/codeta.git /var/git/puppet/codeta
+    cp $git_dir/puppet/files/puppet.conf /etc/puppet/puppet.conf
+    puppet apply $git_dir/puppet/manifests/bootstrap.pp
     chown -R git /var/git/puppet/codeta/
 }
 

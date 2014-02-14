@@ -30,6 +30,13 @@ class apache::config {
         notify => Class['apache::service'],
  	}
 
+    file { ['/srv/', '/srv/www/', '/srv/www/codeta/']:
+        ensure => directory,
+        owner => 'root',
+        group => 'root',
+        mode => 0440,
+    }
+
     file { '/srv/www/codeta/log':
         ensure => directory,
         owner => 'root',

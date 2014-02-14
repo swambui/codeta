@@ -19,8 +19,3 @@ file {
 package { 'git':
     ensure => present,
 }
-
-exec { 'Change puppet config':
-    user => 'root',
-    command => '/bin/cp /var/git/puppet/codeta/puppet/files/puppet.conf /etc/puppet/puppet.conf',
-}
