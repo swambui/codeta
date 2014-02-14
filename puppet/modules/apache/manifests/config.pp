@@ -57,4 +57,8 @@ class apache::config {
         group => 'root',
         mode => 0444,
     }
+
+    file { '/etc/apache2/sites-enabled/000-default':
+        ensure => absent,
+    }
 }
