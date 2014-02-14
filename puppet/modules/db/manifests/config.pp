@@ -1,4 +1,8 @@
 class db::config {
+    user { 'pguser':
+        ensure => present,
+    }
+
     class { 'postgresql::globals':
         pg_hba_conf_defaults => false,
     }
