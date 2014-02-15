@@ -10,4 +10,5 @@ class db::install {
     user { 'pguser':
         ensure => present,
     }
+
  }

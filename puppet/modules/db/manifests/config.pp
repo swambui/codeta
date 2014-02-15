@@ -82,14 +82,14 @@ class db::config {
         user => 'pguser',
         password => postgresql_password('pguser', 'default'),
         owner => 'pguser',
-        require => Class['db::install'],
+        require => [Class['db::install'], 'pguser'],
     }
 
     postgresql::server::db { 'codeta_test':
         user => 'pguser',
         password => postgresql_password('pguser', 'default'),
         owner => 'pguser',
-        require => Class['db::install'],
+        require => [Class['db::install'], 'pguser'],
     }
 
 }

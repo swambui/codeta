@@ -34,7 +34,7 @@ class apache::config {
         ensure => directory,
         owner => 'root',
         group => 'root',
-        mode => 0440,
+        mode => 0444,
     }
 
     file { '/srv/www/codeta/log':
