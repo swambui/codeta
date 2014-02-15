@@ -60,5 +60,6 @@ class apache::config {
 
     file { '/etc/apache2/sites-enabled/000-default':
         ensure => absent,
+        require => Class['apache::install'],
     }
 }
