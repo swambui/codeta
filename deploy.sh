@@ -20,8 +20,10 @@ CP=/bin/cp;
 RM=/bin/rm;
 ECHO=/bin/echo;
 MKDIR=/bin/mkdir;
+CHOWN=/bin/chown;
 
 APT_GET=/usr/bin/apt-get;
+GIT=/usr/bin/git;
 
 #-------------------------------------------------------------------------------
 # default configuration
@@ -65,17 +67,17 @@ function deploy_webapp {
 
 function deploy_server {
     # set up and run our puppet stuff
-    apt-get install puppet
-    git clone https://www.github.com/bmoar/codeta.git /var/git/puppet/codeta
-    cp $git_dir/puppet/files/puppet.conf /etc/puppet/puppet.conf
+    $APT_GET install -y puppet
+    $GIT clone https://www.github.com/bmoar/codeta.git /var/git/puppet/codeta
+    $CP $git_dir/puppet/files/puppet.conf /etc/puppet/puppet.conf
     puppet apply $git_dir/puppet/manifests/bootstrap.pp
-    chown -R git /var/git/puppet/codeta/
+    $CHOWN -R git /var/git/puppet/codeta/
 }
 
 function deploy_puppet {
     # pull codeta repo and run puppet
     cd /var/git/puppet/codeta/
-    git pull
+    $GIT pull
     puppet apply /var/git/puppet/codeta/puppet/manifests/site.pp
 }
 
