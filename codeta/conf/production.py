@@ -1,5 +1,5 @@
 """
-    Default app config for development
+    Codeta config for production
 """
 
 # Core
@@ -13,4 +13,5 @@ DB_USER = 'pguser'
 DB_PASSWORD = 'default'
 
 # Logging
-LOGCONF_PATH = '/home/scoob/github/codeta/codeta/conf/dev_logging.conf'
+LOGCONF_PATH = '/srv/www/codeta/wsgi/codeta/conf/logging.conf'
+LOGGER = 'codeta.logger.production'

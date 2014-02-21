@@ -5,9 +5,10 @@
     A simple webapp to grade source code
 
 """
+import os
+import sys
 import logging
 import logging.config
-#from logging.handlers import FileHandler
 
 from flask import Flask, request, session, g, redirect, url_for, \
         abort, render_template, flash
@@ -18,26 +19,40 @@ from flask.ext.login import (LoginManager, current_user, login_required,
 
 from codeta.models.database import Postgres
 
-
 app = Flask(__name__)
-
-app.config.from_pyfile('conf/dev.py')
 
 #app.config.from_envvar('CODETA_SETTINGS', silent=True)
 
-# Logging
-logging.config.fileConfig(app.config['LOGCONF_PATH'])
+# Get configuration
+app.config['CODETA_MODE'] = os.environ.get('CODETA_MODE')
 
-if app.config['TESTING'] == True:
-    logger = logging.getLogger('codeta.logger.debug')
+if app.config['CODETA_MODE'] == 'production':
+    app.config.from_pyfile('conf/production.py')
+
+elif app.config['CODETA_MODE'] == 'development':
+    app.config.from_pyfile('conf/development.py')
+
+elif app.config['CODETA_MODE'] == 'testing':
+    app.config.from_pyfile('conf/testing.py')
 
 else:
-    logger = logging.getLogger('codeta.logger.webapp')
+    print '[ERROR] - Unrecognized mode: %s' % (app.config['CODETA_MODE'])
+    print 'Please set the envvar `CODETA_MODE` = (production | development | testing)'
+    sys.exit(1)
 
+# Logging
+logging.config.fileConfig(app.config['LOGCONF_PATH'])
+logger = logging.getLogger(app.config['LOGGER'])
+
+if app.config['DEBUG']:
+    logger.setLevel(logging.DEBUG)
+    #logger.addHandler('codeta.handler.debug_log')
+
+# Load database model
 db = Postgres(app)
 
 # login_manager config
-logger.debug('Test message')
+logger.info('Test message')
 login_manager = LoginManager()
 login_manager.init_app(app)
 
@@ -45,7 +60,7 @@ login_manager.init_app(app)
 def load_user(user_id):
     return db.get_user(user_id)
 
-# These rely on our app being intialized
+# Import all our models and views
 from codeta.views.core import *
 from codeta.models.user import User
 

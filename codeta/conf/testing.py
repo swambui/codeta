@@ -10,12 +10,12 @@ TESTING = True
 DATABASE = 'codeta_test'
 SECRET_KEY = 'test key'
 DB_USER = 'pguser'
-DB_PASS = 'default'
-
+DB_PASSWORD = 'default'
 
 # User
 TEST_USER = 'test_instructor'
 TEST_PW = 'test_password'
 
 # Logging
-LOGCONF_PATH = '/home/scoob/github/codeta/codeta/conf/dev_logging.conf'
+LOGCONF_PATH = '/home/dsr/github/codeta/codeta/conf/logging.conf'
+LOGGER = 'codeta.logger.testing'
