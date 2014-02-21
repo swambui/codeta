@@ -129,7 +129,4 @@ class CodetaTestCase(unittest.TestCase):
 if __name__ == '__main__':
     # set config testing options
     app.config.from_pyfile('conf/test.py')
-
-    logging.basicConfig(filename='test.log', level=logging.DEBUG)
-
     unittest.main()

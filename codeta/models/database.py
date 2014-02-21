@@ -16,10 +16,6 @@ class Postgres(object):
             Initialize and add to our flask app
             as app.db
 
-            TODO: ADD CONNECTION TO THIS CLASS
-            THIS (app.db) WILL MAINTAIN THE DATABASE
-            CONNECTION FOR OUR APP, BASICALLY REPLACING
-            WHAT SQL ALCHEMY IS DOING!!!! YAY
         """
 
         app.db = self

@@ -18,4 +18,4 @@ TEST_USER = 'test_instructor'
 TEST_PW = 'test_password'
 
 # Logging
-LOG_PATH = '../../log/codeta-test.log'
+LOGCONF_PATH = '/home/scoob/github/codeta/codeta/conf/dev_logging.conf'
