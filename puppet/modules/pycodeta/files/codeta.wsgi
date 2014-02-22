@@ -1,4 +1,6 @@
 import os, sys, logging
+os.environ['CODETA_MODE'] = 'production'
+
 logging.basicConfig(stream=sys.stderr)
 
 PROJECT_DIR = '/srv/www/codeta/wsgi/'

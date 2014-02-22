@@ -4,6 +4,7 @@ import psycopg2
 import psycopg2.extras
 
 from codeta.models.user import User
+from codeta import logger
 
 class Postgres(object):
     """
@@ -16,10 +17,6 @@ class Postgres(object):
             Initialize and add to our flask app
             as app.db
 
-            TODO: ADD CONNECTION TO THIS CLASS
-            THIS (app.db) WILL MAINTAIN THE DATABASE
-            CONNECTION FOR OUR APP, BASICALLY REPLACING
-            WHAT SQL ALCHEMY IS DOING!!!! YAY
         """
 
         app.db = self
@@ -34,6 +31,7 @@ class Postgres(object):
         db = self.get_db()
         cur = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
+        logger.debug("User: %s - Pass: %s - auth attempt. " % (username, password))
         # hash the password and store it in the db
         cur.execute("SELECT * FROM Users WHERE username = (%s) \
                 AND password = (%s)", (username, password, ))
@@ -47,6 +45,10 @@ class Postgres(object):
                     user['username'],
                     user['password'],
                     user['email'])
+            logger.debug("User: %s - auth success." % (username))
+        else:
+            logger.debug("User: %s - auth failure." % (username))
+
         cur.close()
         return user
 

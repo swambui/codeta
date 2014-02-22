@@ -5,7 +5,7 @@ from flask.ext.login import (current_user, login_required,
         login_user, logout_user, confirm_login,
         fresh_login_required)
 
-from codeta import app, db, login_manager
+from codeta import app, db, login_manager, logger
 
 @app.before_request
 def before_request():
@@ -65,8 +65,10 @@ def login():
                     request.form['password'])
             if user:
                 login_user(user)
+                logger.info('User: %s - login auth success.' % (request.form['username']))
                 return redirect(url_for('homepage'))
             else:
+                logger.info('User: %s - login auth failure.' % (request.form['username']))
                 error = 'Invalid username or password.'
 
     return render_template('login.html', error=error)

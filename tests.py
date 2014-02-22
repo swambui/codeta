@@ -11,8 +11,10 @@ import unittest
 import psycopg2
 import logging
 
+os.environ['CODETA_MODE'] = 'testing'
+
 from codeta import app, db
-from codeta.conf.test import *
+from codeta.conf.testing import *
 from codeta.models.database import Postgres
 
 class CodetaTestCase(unittest.TestCase):
@@ -128,8 +130,4 @@ class CodetaTestCase(unittest.TestCase):
 
 if __name__ == '__main__':
     # set config testing options
-    app.config.from_pyfile('conf/test.py')
-
-    logging.basicConfig(filename='test.log', level=logging.DEBUG)
-
     unittest.main()
