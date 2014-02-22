@@ -3,7 +3,7 @@
 """
 
 # Core
-DEBUG = True
+DEBUG = False
 TESTING = False
 
 # Database
@@ -13,5 +13,6 @@ DB_USER = 'pguser'
 DB_PASSWORD = 'default'
 
 # Logging
-LOGCONF_PATH = '/srv/www/codeta/wsgi/codeta/conf/logging.conf'
-LOGGER = 'codeta.logger.production'
+LOGGER = 'production'
+DEBUG_LOGGING = True
+DEBUG_LOG_PATH = '/srv/www/codeta/log/codeta-debug.log'

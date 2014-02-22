@@ -13,5 +13,6 @@ DB_USER = 'pguser'
 DB_PASSWORD = 'default'
 
 # Logging
-LOGCONF_PATH = '/home/dsr/github/codeta/codeta/conf/logging.conf'
-LOGGER = 'codeta.logger.development'
+LOGGER = 'development'
+DEBUG_LOGGING = True
+DEBUG_LOG_PATH = '/tmp/codeta-debug.log'

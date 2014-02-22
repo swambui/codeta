@@ -17,11 +17,9 @@ from flask.ext.login import (LoginManager, current_user, login_required,
         login_user, logout_user, UserMixin, AnonymousUserMixin, confirm_login,
         fresh_login_required)
 
-from codeta.models.database import Postgres
+from codeta.conf.logging import LOG_DICT
 
 app = Flask(__name__)
-
-#app.config.from_envvar('CODETA_SETTINGS', silent=True)
 
 # Get configuration
 app.config['CODETA_MODE'] = os.environ.get('CODETA_MODE')
@@ -41,18 +39,21 @@ else:
     sys.exit(1)
 
 # Logging
-logging.config.fileConfig(app.config['LOGCONF_PATH'])
+logging.config.dictConfig(LOG_DICT)
 logger = logging.getLogger(app.config['LOGGER'])
 
-if app.config['DEBUG']:
-    logger.setLevel(logging.DEBUG)
-    #logger.addHandler('codeta.handler.debug_log')
+if app.config['DEBUG_LOGGING']:
+    dbg_handler = logging.FileHandler(app.config['DEBUG_LOG_PATH'], 'a', None, True)
+    f = logging.Formatter('%(asctime)s - [%(levelname)s] (%(filename)s:%(funcName)s:%(lineno)s) %(message)s')
+    dbg_handler.setFormatter(f)
+    dbg_handler.setLevel(logging.DEBUG)
+    logger.addHandler(dbg_handler)
 
 # Load database model
+from codeta.models.database import Postgres
 db = Postgres(app)
 
 # login_manager config
-logger.info('Test message')
 login_manager = LoginManager()
 login_manager.init_app(app)
 
