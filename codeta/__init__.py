@@ -18,6 +18,7 @@ from flask.ext.login import (LoginManager, current_user, login_required,
         fresh_login_required)
 
 from codeta.conf.logging import LOG_DICT
+from codeta.models.security import Auth
 
 app = Flask(__name__)
 
@@ -51,7 +52,8 @@ if app.config['DEBUG_LOGGING']:
 
 # Load database model
 from codeta.models.database import Postgres
-db = Postgres(app)
+auth = Auth()
+db = Postgres(auth, app)
 
 # login_manager config
 login_manager = LoginManager()

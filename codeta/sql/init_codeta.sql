@@ -9,7 +9,7 @@ create table if not exists Users (
     user_id bigserial primary key,
     email varchar(100) not null,
     username varchar(100) not null,
-    password char(60) not null,
+    password char(75) not null,
     first_name varchar(100),
     last_name varchar(100)
 );

@@ -32,20 +32,13 @@ def join():
         elif app.db.get_username(request.form['username']):
             error = 'Sorry, that username is already taken.'
         elif not error:
-            db = app.db.get_db()
+            rc = app.db.register_user(
+                    request.form['username'],
+                    request.form['password'],
+                    request.form['email'],
+                    request.form['fname'],
+                    request.form['lname'])
 
-            sql = "INSERT INTO Users (username, password, email, first_name, last_name) \
-                VALUES (%s, %s, %s, %s, %s);"
-            data = (
-                request.form['username'],
-                request.form['password'],
-                request.form['email'],
-                request.form['fname'],
-                request.form['lname'],
-            )
-
-            db.cursor().execute(sql, data)
-            db.commit()
             flash('You successfully joined, welcome!')
             return redirect(url_for('login'))
     return render_template('join.html', error=error)
