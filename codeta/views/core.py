@@ -6,6 +6,7 @@ from flask.ext.login import (current_user, login_required,
         fresh_login_required)
 
 from codeta import app, db, login_manager, logger
+from codeta.forms.forms import RegistrationForm
 
 @app.before_request
 def before_request():
@@ -19,33 +20,20 @@ def homepage():
 @app.route('/join', methods=['GET', 'POST'])
 def join():
     """ Register the user for an account """
-    error = None
-    if request.method == 'POST':
-        if not request.form['username']:
-            error = 'You must enter a username.'
-        elif not request.form['password']:
-            error = 'You must enter a password.'
-        elif not request.form['email'] or '@' not in request.form['email']:
-            error = 'You must enter a valid email address.'
-        elif request.form['password'] != request.form['password2']:
-            error = 'Your passwords did not match.'
-        elif app.db.get_username(request.form['username']):
-            error = 'Sorry, that username is already taken.'
-        elif not error:
-            rc = app.db.register_user(
-                    request.form['username'],
-                    request.form['password'],
-                    request.form['email'],
-                    request.form['fname'],
-                    request.form['lname'])
+    form = RegistrationForm(request.form)
+    if request.method == 'POST' and form.validate():
+        rc = app.db.register_user(
+                request.form['username'],
+                request.form['password'],
+                request.form['email'],
+                request.form['fname'],
+                request.form['lname'])
 
-            flash('You successfully joined, welcome!')
-            return redirect(url_for('login'))
-    return render_template('join.html', error=error)
+        return redirect(url_for('login'))
+    return render_template('join.html', form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    # login user
     error = None
     if request.method == 'POST':
         if not request.form['username']:
