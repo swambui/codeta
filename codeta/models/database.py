@@ -120,6 +120,7 @@ class Postgres(object):
             returns True if username is found, otherwise False
         """
 
+        user = None
         with self.app.app_context():
             if username:
                 db = self.get_db()
@@ -148,7 +149,6 @@ class Postgres(object):
             db = self.get_db()
 
             pw_hash = self.auth.hash_password(password)
-            logger.debug(pw_hash)
 
             sql = "INSERT INTO Users (username, password, email, first_name, last_name) \
                 VALUES (%s, %s, %s, %s, %s);"

@@ -1,17 +1,18 @@
 {% extends "layout.html" %}
 {% block title %}Join{% endblock %}
 {% block body %}
-    {% if error %} Error: {{ error }} {% endif %}
-    <form method="post" action="">
-        <ul>
-            <li>Username: <input id="username" name="username" type="text"></li>
-            <li>password: <input id="password" name="password" type="text"></li>
-            <li>password2: <input id="password2" name="password2" type="text"></li>
-            <li>email: <input id="email" name="email" type="text"></li>
-            <li>fname: <input id="fname" name="fname" type="text"></li>
-            <li>lname: <input id="lname" name="lname" type="text"></li>
-        </ul>
-        <input type="submit" value="Submit">
+    {% from "_formhelpers.html" import render_field %}
+    <form method="post" action="/join">
+        <dl>
+            {{ render_field(form.username) }}
+            {{ render_field(form.email) }}
+            {{ render_field(form.confirm_email) }}
+            {{ render_field(form.password) }}
+            {{ render_field(form.confirm_password) }}
+            {{ render_field(form.fname) }}
+            {{ render_field(form.lname) }}
+        </dl>
+        <input type="submit" value="Join">
     </form>
 
 {% endblock %}
