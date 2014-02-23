@@ -98,7 +98,7 @@ class CodetaTestCase(unittest.TestCase):
         assert b'Sorry, that username is already taken.' in rc.data
 
         rc = self.register('', 'derp')
-        assert b'Field must be between 1 and 25 characters long.' in rc.data
+        assert b'Field must be between 1 and 100 characters long.' in rc.data
 
         rc = self.register('derp', '')
         assert b'This field is required.' in rc.data
