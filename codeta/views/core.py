@@ -6,7 +6,7 @@ from flask.ext.login import (current_user, login_required,
         fresh_login_required)
 
 from codeta import app, db, login_manager, logger
-from codeta.forms.forms import RegistrationForm
+from codeta.forms.registration import RegistrationForm
 
 @app.before_request
 def before_request():
