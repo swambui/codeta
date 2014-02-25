@@ -136,6 +136,11 @@ class CodetaTestCase(unittest.TestCase):
                 'wrong password')
         assert b'Invalid username or password.' in rc.data
 
+    def test_errors(self):
+        rc = self.app.get('/this_should_not_exist', follow_redirects=True)
+
+        assert b'404 error :(' in rc.data
+
 
 if __name__ == '__main__':
     unittest.main()
