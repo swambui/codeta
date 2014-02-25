@@ -3,14 +3,15 @@
     redirects for login manager, etc
 """
 
-from codeta import app, db, login_manager, logger
-
 from flask import request, session, g, redirect, url_for, \
         abort, render_template, flash
 
 from flask.ext.login import (current_user, login_required,
         login_user, logout_user, confirm_login,
         fresh_login_required)
+
+from codeta import app, db, login_manager, logger
+from codeta.forms.login import LoginForm
 
 @app.before_request
 def before_request():
@@ -28,7 +29,8 @@ def unauthorized():
         return the login page when a user
         needs to be logged in to view a page
     """
-    return render_template('user/login.html')
+    form = LoginForm(request.form)
+    return render_template('user/login.html', form=form)
 
 @app.errorhandler(404)
 def page_not_found(error):

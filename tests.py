@@ -110,10 +110,13 @@ class CodetaTestCase(unittest.TestCase):
         assert b'You must enter a valid email address.' in rc.data
 
         rc = self.register('derp', 'pass', 'pass', email='broken@broken.com')
-        logger.debug(rc.data)
         assert b'Email addresses must match.' in rc.data
 
     def test_login_logout(self):
+        """
+            Test logging in and logging out
+            and failed login error cases
+        """
         self.register(
                 app.config['TEST_USER'],
                 app.config['TEST_PW'])
@@ -136,9 +139,14 @@ class CodetaTestCase(unittest.TestCase):
                 'wrong password')
         assert b'Invalid username or password.' in rc.data
 
-    def test_errors(self):
-        rc = self.app.get('/this_should_not_exist', follow_redirects=True)
+    def test_logout_redirect(self):
+        """ test logging out without being logged in """
+        rc = self.logout()
+        assert b'You logged out.' in rc.data
 
+    def test_errors(self):
+        """ test 404 error page """
+        rc = self.app.get('/this_should_not_exist', follow_redirects=True)
         assert b'404 error :(' in rc.data
 
 
