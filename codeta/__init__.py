@@ -56,6 +56,7 @@ auth = Auth()
 db = Postgres(auth, app)
 
 # login_manager config
+logger.debug("test message")
 login_manager = LoginManager()
 login_manager.init_app(app)
 

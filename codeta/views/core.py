@@ -7,6 +7,7 @@ from flask.ext.login import (current_user, login_required,
 
 from codeta import app, db, login_manager, logger
 from codeta.forms.registration import RegistrationForm
+from codeta.forms.login import LoginForm
 
 @app.before_request
 def before_request():
@@ -35,24 +36,20 @@ def join():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
-    if request.method == 'POST':
-        if not request.form['username']:
-            error = 'Invalid username.'
-        elif not request.form['password']:
-            error = 'Invalid password.'
+    form = LoginForm(request.form)
+    if request.method == 'POST' and form.validate():
+        user = app.db.auth_user(
+                request.form['username'],
+                request.form['password'])
+        if user:
+            login_user(user)
+            logger.info('User: %s - login auth success.' % (request.form['username']))
+            return redirect(url_for('homepage'))
         else:
-            user = app.db.auth_user(
-                    request.form['username'],
-                    request.form['password'])
-            if user:
-                login_user(user)
-                logger.info('User: %s - login auth success.' % (request.form['username']))
-                return redirect(url_for('homepage'))
-            else:
-                logger.info('User: %s - login auth failure.' % (request.form['username']))
-                error = 'Invalid username or password.'
+            logger.info('User: %s - login auth failure.' % (request.form['username']))
+            error = 'Invalid username or password.'
 
-    return render_template('login.html', error=error)
+    return render_template('login.html', form=form, error=error)
 
 @app.route('/logout')
 @login_required
