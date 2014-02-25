@@ -1,3 +1,11 @@
+"""
+    Contains views that users directly access.
+
+    Includes login/logout, homepage, account management,
+    etc.
+
+"""
+
 from flask import request, session, g, redirect, url_for, \
         abort, render_template, flash
 
@@ -9,11 +17,6 @@ from codeta import app, db, login_manager, logger
 from codeta.forms.registration import RegistrationForm
 from codeta.forms.login import LoginForm
 
-@app.before_request
-def before_request():
-    g.user = current_user
-
-# views
 @app.route('/')
 def homepage():
     return render_template('home.html')
