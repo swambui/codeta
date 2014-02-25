@@ -28,9 +28,14 @@ def unauthorized():
         return the login page when a user
         needs to be logged in to view a page
     """
-    return render_template('login.html')
+    return render_template('user/login.html')
 
 @app.errorhandler(404)
 def page_not_found(error):
     """ Return a 404 error page """
-    return render_template('404.html'), 404
+    return render_template('util/404.html'), 404
+
+@app.errorhandler(403)
+def page_forbidden(error):
+    """ Return a 403 error page """
+    return render_template('util/403.html'), 403
