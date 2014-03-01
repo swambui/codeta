@@ -1,3 +1,11 @@
+"""
+    Contains views that users directly access.
+
+    Includes login/logout, homepage, account management,
+    etc.
+
+"""
+
 from flask import request, session, g, redirect, url_for, \
         abort, render_template, flash
 
@@ -9,14 +17,9 @@ from codeta import app, db, login_manager, logger
 from codeta.forms.registration import RegistrationForm
 from codeta.forms.login import LoginForm
 
-@app.before_request
-def before_request():
-    g.user = current_user
-
-# views
 @app.route('/')
 def homepage():
-    return render_template('home.html')
+    return render_template('user/home.html')
 
 @app.route('/join', methods=['GET', 'POST'])
 def join():
@@ -31,7 +34,7 @@ def join():
                 request.form['lname'])
 
         return redirect(url_for('login'))
-    return render_template('join.html', form=form)
+    return render_template('user/join.html', form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -49,7 +52,7 @@ def login():
             logger.info('User: %s - login auth failure.' % (request.form['username']))
             error = 'Invalid username or password.'
 
-    return render_template('login.html', form=form, error=error)
+    return render_template('user/login.html', form=form, error=error)
 
 @app.route('/logout')
 @login_required

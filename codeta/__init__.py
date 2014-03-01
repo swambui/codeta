@@ -56,7 +56,6 @@ auth = Auth()
 db = Postgres(auth, app)
 
 # login_manager config
-logger.debug("test message")
 login_manager = LoginManager()
 login_manager.init_app(app)
 
@@ -65,7 +64,9 @@ def load_user(user_id):
     return db.get_user(user_id)
 
 # Import all our models and views
-from codeta.views.core import *
+from codeta.views.user import *
+from codeta.views.util import *
+
 from codeta.models.user import User
 
 if __name__ == "__main__":

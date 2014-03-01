@@ -1,9 +1,9 @@
-{% extends "layout.html" %}
+{% extends "helpers/layout.html" %}
 {% block title %}Login{% endblock %}
 {% block body %}
     {% if error %} Error: {{ error }} {% endif %}
     <h2>Login to Code TA</h2>
-    {% from "_formhelpers.html" import render_field %}
+    {% from "helpers/_formhelpers.html" import render_field %}
     <form method="post" action="/login">
         <dl>
             {{ render_field(form.username) }}

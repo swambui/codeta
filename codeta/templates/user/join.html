@@ -1,7 +1,7 @@
-{% extends "layout.html" %}
+{% extends "helpers/layout.html" %}
 {% block title %}Join{% endblock %}
 {% block body %}
-    {% from "_formhelpers.html" import render_field %}
+    {% from "helpers/_formhelpers.html" import render_field %}
     <form method="post" action="/join">
         <dl>
             {{ render_field(form.username) }}
