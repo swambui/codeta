@@ -1,16 +1,6 @@
 #!/bin/bash
 
 # Deploys the application to a server, installing all the necessary components
-# Two main parts, deploying of the server infrastructure for the webapp
-# and deploying the webapp itself
-
-# Run 'deploy.sh server'
-# to install the webserver, database server, python dependencies
-# should only have to do this once unless you update the server configurations
-
-# Run 'deploy.sh webapp'
-# to update the webapp with the files in your currently checked out git repo
-
 
 #-------------------------------------------------------------------------------
 # bin for the script
@@ -65,7 +55,7 @@ function deploy_webapp {
     $CP -r $git_dir/$app/ $webapp_dir/
 }
 
-function deploy_server {
+function deploy_bootstrap {
     # set up and run our puppet stuff
     $APT_GET install -y puppet
     $GIT clone https://www.github.com/bmoar/codeta.git /var/git/puppet/codeta
@@ -94,15 +84,15 @@ set e
 # check main deployment opt
 case $user_args in
     all)
-        deploy_server
+        deploy_bootstrap
         deploy_puppet
         deploy_webapp
         ;;
     puppet)
         deploy_puppet
         ;;
-    server)
-        deploy_server
+    bootstrap)
+        deploy_bootstrap
         ;;
     webapp)
         deploy_webapp

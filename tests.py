@@ -11,9 +11,12 @@ import unittest
 import psycopg2
 import logging
 
+os.environ['CODETA_MODE'] = 'testing'
+
 from codeta import app, db
-from codeta.conf.test import *
+from codeta.conf.testing import *
 from codeta.models.database import Postgres
+from codeta import logger
 
 class CodetaTestCase(unittest.TestCase):
 
@@ -36,7 +39,7 @@ class CodetaTestCase(unittest.TestCase):
 
     # unit test helper functions
     def register(self, username, password, password2=None,
-            email=None, fname=None, lname=None):
+            email=None, email2=None, fname=None, lname=None):
         """ registers a test user """
 
         if password2 is None:
@@ -44,6 +47,9 @@ class CodetaTestCase(unittest.TestCase):
 
         if email is None:
             email = "%s@codeta_test.com" % (username)
+
+        if email2 is None:
+            email2 = "%s@codeta_test.com" % (username)
 
         if fname is None:
             fname = username
@@ -54,8 +60,9 @@ class CodetaTestCase(unittest.TestCase):
         return self.app.post('/join', data={
             'username': username,
             'password': password,
-            'password2': password2,
+            'confirm_password': password2,
             'email': email,
+            'confirm_email': email2,
             'fname': fname,
             'lname': lname
             }, follow_redirects=True)
@@ -91,18 +98,25 @@ class CodetaTestCase(unittest.TestCase):
         assert b'Sorry, that username is already taken.' in rc.data
 
         rc = self.register('', 'derp')
-        assert b'You must enter a username.' in rc.data
+        assert b'Field must be between 1 and 100 characters long.' in rc.data
 
         rc = self.register('derp', '')
-        assert b'You must enter a password.' in rc.data
+        assert b'This field is required.' in rc.data
 
         rc = self.register('derp', 'pass', 'not same pass')
-        assert b'Your passwords did not match.' in rc.data
+        assert b'Passwords must match.' in rc.data
 
-        rc = self.register('derp', 'pass', 'pass', email='broke')
+        rc = self.register('derp', 'pass', 'pass', email='broken', email2='broken')
         assert b'You must enter a valid email address.' in rc.data
 
+        rc = self.register('derp', 'pass', 'pass', email='broken@broken.com')
+        assert b'Email addresses must match.' in rc.data
+
     def test_login_logout(self):
+        """
+            Test logging in and logging out
+            and failed login error cases
+        """
         self.register(
                 app.config['TEST_USER'],
                 app.config['TEST_PW'])
@@ -125,11 +139,16 @@ class CodetaTestCase(unittest.TestCase):
                 'wrong password')
         assert b'Invalid username or password.' in rc.data
 
+    def test_logout_redirect(self):
+        """ test logging out without being logged in """
+        rc = self.logout()
+        assert b'You logged out.' in rc.data
+
+    def test_errors(self):
+        """ test 404 error page """
+        rc = self.app.get('/this_should_not_exist', follow_redirects=True)
+        assert b'404 error :(' in rc.data
+
 
 if __name__ == '__main__':
-    # set config testing options
-    app.config.from_pyfile('conf/test.py')
-
-    logging.basicConfig(filename='test.log', level=logging.DEBUG)
-
     unittest.main()

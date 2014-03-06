@@ -4,6 +4,7 @@ import psycopg2
 import psycopg2.extras
 
 from codeta.models.user import User
+from codeta import logger
 
 class Postgres(object):
     """
@@ -11,17 +12,17 @@ class Postgres(object):
         and to query various things from the db
     """
 
-    def __init__(self, app=None):
+    def __init__(self, auth, app=None):
         """
             Initialize and add to our flask app
             as app.db
 
-            TODO: ADD CONNECTION TO THIS CLASS
-            THIS (app.db) WILL MAINTAIN THE DATABASE
-            CONNECTION FOR OUR APP, BASICALLY REPLACING
-            WHAT SQL ALCHEMY IS DOING!!!! YAY
+            auth = security model for checking passwords
+            app = flask app to bind to
+
         """
 
+        self.auth = auth
         app.db = self
         self.app = app
 
@@ -34,19 +35,28 @@ class Postgres(object):
         db = self.get_db()
         cur = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
+        logger.debug("User: %s - Pass: %s - auth attempt. " % (username, password))
         # hash the password and store it in the db
-        cur.execute("SELECT * FROM Users WHERE username = (%s) \
-                AND password = (%s)", (username, password, ))
+        cur.execute("SELECT * FROM Users WHERE username = (%s)", (username, ))
         user = cur.fetchone()
         colnames = [desc[0] for desc in cur.description]
 
         if user:
-            user = dict(zip(colnames, user))
-            user = User(
-                    int(user['user_id']),
-                    user['username'],
-                    user['password'],
-                    user['email'])
+            h = user['password']
+            if(self.auth.check_password(password, h)):
+                user = dict(zip(colnames, user))
+                user = User(
+                        int(user['user_id']),
+                        user['username'],
+                        user['password'],
+                        user['email'])
+                logger.debug("User: %s - auth success." % (username))
+            else:
+                user = None
+
+        if not user:
+            logger.debug("User: %s - auth failure." % (username))
+
         cur.close()
         return user
 
@@ -56,7 +66,6 @@ class Postgres(object):
         """
         if hasattr(g, 'pgsql_db'):
             g.pgsql_db.close()
-
 
     def connect_db(self):
         """
@@ -111,6 +120,7 @@ class Postgres(object):
             returns True if username is found, otherwise False
         """
 
+        user = None
         with self.app.app_context():
             if username:
                 db = self.get_db()
@@ -129,4 +139,27 @@ class Postgres(object):
             db = self.get_db()
             with self.app.open_resource('sql/init_codeta.sql', mode='r') as f:
                 db.cursor().execute(f.read())
+            db.commit()
+
+    def register_user(self, username, password, email, fname, lname):
+        """
+            Register a user in the database
+        """
+        with self.app.app_context():
+            db = self.get_db()
+
+            pw_hash = self.auth.hash_password(password)
+
+            sql = "INSERT INTO Users (username, password, email, first_name, last_name) \
+                VALUES (%s, %s, %s, %s, %s);"
+
+            data = (
+                username,
+                pw_hash,
+                email,
+                fname,
+                lname,
+            )
+
+            db.cursor().execute(sql, data)
             db.commit()

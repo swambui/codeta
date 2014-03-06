@@ -1,0 +1,18 @@
+{% extends "helpers/layout.html" %}
+{% block title %}Join{% endblock %}
+{% block body %}
+    {% from "helpers/_formhelpers.html" import render_field %}
+    <form method="post" action="/join">
+        <dl>
+            {{ render_field(form.username) }}
+            {{ render_field(form.email) }}
+            {{ render_field(form.confirm_email) }}
+            {{ render_field(form.password) }}
+            {{ render_field(form.confirm_password) }}
+            {{ render_field(form.fname) }}
+            {{ render_field(form.lname) }}
+        </dl>
+        <input type="submit" value="Join">
+    </form>
+
+{% endblock %}

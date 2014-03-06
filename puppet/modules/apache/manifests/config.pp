@@ -4,7 +4,7 @@ class apache::config {
         ensure => present,
         owner => 'root',
         group => 'root',
-        mode => 0440,
+        mode => 440,
         source => 'puppet:///modules/apache/apache2.conf',
         require => Class['apache::install'],
         notify => Class['apache::service'],
@@ -14,7 +14,7 @@ class apache::config {
         ensure => present,
         owner => 'root',
         group => 'root',
-        mode => 0440,
+        mode => 440,
         source => 'puppet:///modules/apache/codeta.conf',
         require => Class['apache::install'],
         notify => Class['apache::service'],
@@ -24,7 +24,7 @@ class apache::config {
         ensure => present,
         owner => 'root',
         group => 'root',
-        mode => 0440,
+        mode => 440,
         source => 'puppet:///modules/apache/wsgi.conf',
         require => Class['apache::install'],
         notify => Class['apache::service'],
@@ -34,28 +34,28 @@ class apache::config {
         ensure => directory,
         owner => 'root',
         group => 'root',
-        mode => 0444,
+        mode => 444,
     }
 
     file { '/srv/www/codeta/log':
         ensure => directory,
-        owner => 'root',
-        group => 'root',
-        mode => 0440,
+        owner => 'www-data',
+        group => 'www-data',
+        mode => 660,
     }
 
     file { '/srv/www/codeta/wsgi':
         ensure => directory,
-        owner => 'root',
-        group => 'root',
-        mode => 0444,
+        owner => 'www-data',
+        group => 'www-data',
+        mode => 444,
     }
 
     file { '/srv/www/codeta/root':
         ensure => directory,
-        owner => 'root',
-        group => 'root',
-        mode => 0444,
+        owner => 'www-data',
+        group => 'www-data',
+        mode => 444,
     }
 
     file { '/etc/apache2/sites-enabled/000-default':

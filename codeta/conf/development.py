@@ -4,6 +4,7 @@
 
 # Core
 DEBUG = True
+TESTING = False
 
 # Database
 DATABASE = 'codeta'
@@ -11,7 +12,7 @@ SECRET_KEY = 'development key'
 DB_USER = 'pguser'
 DB_PASSWORD = 'default'
 
-# User
-
 # Logging
-LOG_PATH = '../../log/codeta-debug.log'
+LOGGER = 'development'
+DEBUG_LOGGING = True
+DEBUG_LOG_PATH = '/tmp/codeta-debug.log'
